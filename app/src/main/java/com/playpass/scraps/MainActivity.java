@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -16,10 +17,16 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -31,12 +38,20 @@ public class MainActivity extends AppCompatActivity {
     private TextView welcomeTextView;
     private TextView libraryHintView;
     private Toolbar toolbar;
+    private NavController navController;
+    private BottomNavigationView bottomNavigationView;
+    private AppBarConfiguration appBarConfiguration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        
+        // Hide the action bar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         
         // Set up inserts and padding
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -73,7 +88,50 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // Update UI with user information
             updateUI(currentUser);
+            setupNavigation();
         }
+    }
+    
+    private void setupNavigation() {
+        // Set up bottom navigation
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        
+        // Get the NavHostFragment
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        
+        // Get the NavController from the NavHostFragment
+        navController = navHostFragment.getNavController();
+        
+        // Configure the top-level destinations
+        appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_library, R.id.navigation_search, R.id.navigation_profile)
+                .build();
+        
+        // Connect the NavController to the BottomNavigationView only
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        
+        // Update the toolbar title when the destination changes
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            // Set the toolbar title based on the destination
+            if (toolbar != null) {
+                toolbar.setTitle(destination.getLabel());
+            }
+            
+            // Hide the welcome elements when in any of the bottom nav destinations
+            int destinationId = destination.getId();
+            boolean isNavDestination = destinationId == R.id.navigation_library ||
+                                      destinationId == R.id.navigation_search ||
+                                      destinationId == R.id.navigation_profile;
+            
+            if (isNavDestination) {
+                welcomeTextView.setVisibility(View.GONE);
+                libraryHintView.setVisibility(View.GONE);
+            } else {
+                welcomeTextView.setVisibility(View.VISIBLE);
+                libraryHintView.setVisibility(View.VISIBLE);
+            }
+        });
     }
     
     private void applyCustomFont() {
@@ -87,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
             libraryHintView.setTypeface(regularTypeface);
             
             // Apply to toolbar if needed
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle("Scraps");
+            if (toolbar != null) {
+                toolbar.setTitleTextAppearance(this, R.style.TextAppearance_Scraps_Headline6);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error applying custom fonts", e);
@@ -115,6 +173,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    
+    @Override
+    public boolean onSupportNavigateUp() {
+        return navController.navigateUp() || super.onSupportNavigateUp();
     }
     
     private void signOut() {
