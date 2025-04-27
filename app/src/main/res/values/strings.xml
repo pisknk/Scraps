@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Scraps</string>
+    <string name="app_logo">App Logo</string>
+    <string name="app_description">Store and manage your favourite music and movies in a digital library</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="sign_in_failed">Sign in failed</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="action_sign_out">Sign Out</string>
+    <string name="library_hint">Search for your favorite music and movies to add to your library.</string>
+    <string name="google_icon">Google Icon</string>
 </resources>
