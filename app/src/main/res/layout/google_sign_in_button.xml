@@ -20,6 +20,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
         android:text="@string/continue_with_google"
+        android:fontFamily="@font/google_sans_medium"
+        android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/google_icon"

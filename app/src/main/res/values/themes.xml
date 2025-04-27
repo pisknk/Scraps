@@ -33,6 +33,25 @@
         <item name="android:navigationBarColor">@color/md_theme_surface</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        
+        <!-- Default font family for the entire app -->
+        <item name="android:fontFamily">@font/google_sans_regular</item>
+        <item name="fontFamily">@font/google_sans_regular</item>
+        
+        <!-- Text appearance styles -->
+        <item name="textAppearanceHeadline1">@style/TextAppearance.Scraps.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.Scraps.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.Scraps.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.Scraps.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.Scraps.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.Scraps.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.Scraps.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.Scraps.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.Scraps.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.Scraps.Body2</item>
+        <item name="textAppearanceButton">@style/TextAppearance.Scraps.Button</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.Scraps.Caption</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.Scraps.Overline</item>
     </style>
 
     <style name="Theme.Scraps" parent="Base.Theme.Scraps" />

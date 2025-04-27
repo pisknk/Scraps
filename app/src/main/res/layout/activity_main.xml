@@ -19,7 +19,9 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimaryContainer"
             android:elevation="4dp"
-            app:titleTextColor="?attr/colorOnPrimaryContainer" />
+            app:titleTextColor="?attr/colorOnPrimaryContainer"
+            app:titleTextAppearance="@style/TextAppearance.Scraps.Headline6"
+            app:fontFamily="@font/google_sans_bold" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -31,7 +33,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="Welcome!"
-        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+        android:textAppearance="@style/TextAppearance.Scraps.Headline5"
+        android:fontFamily="@font/google_sans_bold"
         android:textColor="?attr/colorOnBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,8 +47,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="Search for your favorite music and movies to add to your library."
-        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        android:text="@string/library_hint"
+        android:textAppearance="@style/TextAppearance.Scraps.Body1"
+        android:fontFamily="@font/google_sans_regular"
         android:textColor="?attr/colorOnBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,7 +1,9 @@
 package com.playpass.scraps;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -10,6 +12,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -22,9 +25,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     
+    private static final String TAG = "MainActivity";
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private TextView welcomeTextView;
+    private TextView libraryHintView;
     private Toolbar toolbar;
 
     @Override
@@ -54,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         welcomeTextView = findViewById(R.id.welcome_text);
+        libraryHintView = findViewById(R.id.library_hint);
+        
+        // Apply custom font programmatically
+        applyCustomFont();
         
         // Check if the user is signed in
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -64,6 +73,25 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // Update UI with user information
             updateUI(currentUser);
+        }
+    }
+    
+    private void applyCustomFont() {
+        try {
+            // Load our custom fonts
+            Typeface regularTypeface = ResourcesCompat.getFont(this, R.font.google_sans_regular);
+            Typeface boldTypeface = ResourcesCompat.getFont(this, R.font.google_sans_bold);
+            
+            // Apply fonts to text views
+            welcomeTextView.setTypeface(boldTypeface);
+            libraryHintView.setTypeface(regularTypeface);
+            
+            // Apply to toolbar if needed
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("Scraps");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error applying custom fonts", e);
         }
     }
     

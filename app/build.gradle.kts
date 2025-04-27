@@ -30,6 +30,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    
+    // Enable font support
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -42,6 +47,8 @@ dependencies {
     implementation(libs.google.identity.services)
     implementation("androidx.browser:browser:1.6.0")
     implementation("androidx.credentials:credentials:1.2.0")
+    // Add support for font resources
+    implementation("androidx.core:core:1.12.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

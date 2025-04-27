@@ -1,14 +1,17 @@
 package com.playpass.scraps;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -28,6 +31,9 @@ public class LandingActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
     private ConstraintLayout signInButton;
+    private TextView appNameText;
+    private TextView appDescriptionText;
+    private TextView buttonText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +55,32 @@ public class LandingActivity extends AppCompatActivity {
         // Set up the sign in button with new style
         signInButton = findViewById(R.id.google_sign_in_button);
         signInButton.setOnClickListener(v -> signIn());
+        
+        // Find text views
+        appNameText = findViewById(R.id.app_name_text);
+        appDescriptionText = findViewById(R.id.app_description);
+        buttonText = signInButton.findViewById(R.id.button_text);
+        
+        // Apply custom fonts programmatically
+        applyCustomFonts();
+    }
+    
+    private void applyCustomFonts() {
+        try {
+            // Load custom fonts
+            Typeface regularTypeface = ResourcesCompat.getFont(this, R.font.google_sans_regular);
+            Typeface boldTypeface = ResourcesCompat.getFont(this, R.font.google_sans_bold);
+            Typeface mediumTypeface = ResourcesCompat.getFont(this, R.font.google_sans_medium);
+            
+            // Apply fonts to text views
+            appNameText.setTypeface(boldTypeface);
+            appDescriptionText.setTypeface(regularTypeface);
+            if (buttonText != null) {
+                buttonText.setTypeface(mediumTypeface);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error applying custom fonts", e);
+        }
     }
     
     @Override
