@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Artwork at the top -->
+        <ImageView
+            android:id="@+id/detail_artwork"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Media artwork"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:src="@drawable/ic_search"/>
+
+        <!-- Content container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/detail_artwork"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Row with title and genre -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Title -->
+                <TextView
+                    android:id="@+id/detail_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                    android:textStyle="bold"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    tools:text="Title" />
+
+                <!-- Genre -->
+                <TextView
+                    android:id="@+id/detail_genre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorSecondary"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:background="@drawable/genre_background"
+                    tools:text="Genre" />
+            </LinearLayout>
+
+            <!-- Artist/Director -->
+            <TextView
+                android:id="@+id/detail_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                tools:text="Artist" />
+
+            <!-- Collection/Year -->
+            <TextView
+                android:id="@+id/detail_collection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textStyle="italic"
+                tools:text="Collection" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="?android:attr/listDivider" />
+
+            <!-- Description Title -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="About"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:id="@+id/detail_about_title" />
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/detail_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:maxLines="10"
+                android:ellipsize="end"
+                tools:text="This is a long description of the media item that might span multiple lines and contain detailed information about the content." />
+
+            <!-- Additional Info Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <!-- Release Date Column -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Released"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:alpha="0.7" />
+
+                    <TextView
+                        android:id="@+id/detail_release_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        tools:text="January 1, 2023" />
+                </LinearLayout>
+
+                <!-- Additional Info (e.g., Track Count or Length) -->
+                <LinearLayout
+                    android:id="@+id/detail_additional_info_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/detail_additional_info_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Runtime"
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:alpha="0.7" />
+
+                    <TextView
+                        android:id="@+id/detail_additional_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        tools:text="120 minutes" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Action Buttons Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:gravity="center">
+
+                <!-- Listen/Watch Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/detail_stream_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="Listen on Spotify"
+                    style="@style/Widget.Material3.Button.ElevatedButton"
+                    app:backgroundTint="?attr/colorPrimary"
+                    android:textColor="?attr/colorOnPrimary" />
+
+                <!-- Add to Library Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/detail_add_library_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Add to Library"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    app:strokeColor="?attr/colorPrimary"
+                    android:textColor="?attr/colorPrimary" />
+
+            </LinearLayout>
+
+            <!-- More Info Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/detail_more_info_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="More Information"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:textColor="?attr/colorPrimary" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView> 

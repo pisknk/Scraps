@@ -50,10 +50,16 @@ dependencies {
     // Add support for font resources
     implementation("androidx.core:core:1.12.0")
     
+    // Add preference library for SharedPreferences
+    implementation("androidx.preference:preference:1.2.1")
+    
     // Navigation components and Fragment support
     implementation("androidx.navigation:navigation-fragment:2.7.7")
     implementation("androidx.navigation:navigation-ui:2.7.7")
     implementation("androidx.fragment:fragment:1.6.2")
+    
+    // SwipeRefreshLayout support
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     
     // Retrofit for API calls
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -65,6 +71,11 @@ dependencies {
     
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    
+    // Firebase dependencies
+    // implementation("com.google.firebase:firebase-firestore:24.9.1") // Replaced with Realtime Database
+    implementation("com.google.firebase:firebase-database:20.3.1") // Firebase Realtime Database
+    implementation("com.google.firebase:firebase-auth:22.3.1")
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.playpass.scraps.R;
+import com.playpass.scraps.dialog.ItemDetailDialog;
 import com.playpass.scraps.model.SearchResult;
 
 import java.util.ArrayList;
@@ -45,18 +46,30 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_search_result, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, listener);
     }
     
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SearchResult result = results.get(position);
-        holder.bind(result, listener);
+        holder.bind(result);
     }
     
     @Override
     public int getItemCount() {
         return results.size();
+    }
+    
+    public boolean hasResults() {
+        return !results.isEmpty();
+    }
+    
+    public void addResults(List<SearchResult> newResults) {
+        if (newResults != null) {
+            // Add new results without clearing existing ones
+            this.results.addAll(newResults);
+            notifyDataSetChanged();
+        }
     }
     
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -65,20 +78,25 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         private final TextView title;
         private final TextView artist;
         private final TextView collection;
+        private final TextView genre;
+        private final OnItemClickListener itemClickListener;
         
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             context = itemView.getContext();
             artwork = itemView.findViewById(R.id.item_artwork);
             title = itemView.findViewById(R.id.item_title);
             artist = itemView.findViewById(R.id.item_artist);
             collection = itemView.findViewById(R.id.item_collection);
+            genre = itemView.findViewById(R.id.item_genre);
+            this.itemClickListener = listener;
         }
         
-        public void bind(final SearchResult result, final OnItemClickListener listener) {
+        public void bind(final SearchResult result) {
             title.setText(result.getTrackName());
             artist.setText(result.getArtistName());
             collection.setText(result.getCollectionName());
+            genre.setText(result.getGenre());
             
             // Load artwork with Glide
             String artworkUrl = result.getArtworkUrl();
@@ -99,11 +117,29 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                 artwork.setImageResource(R.drawable.ic_search);
             }
             
+            // Set click listener for normal taps
             itemView.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onItemClick(result);
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(result);
                 }
             });
+            
+            // Set long press listener to show detail dialog
+            itemView.setOnLongClickListener(v -> {
+                showDetailDialog(result);
+                return true; // Consume the long press event
+            });
+        }
+        
+        private void showDetailDialog(SearchResult result) {
+            ItemDetailDialog dialog = new ItemDetailDialog(context, result, 
+                    libraryResult -> {
+                        // Handle "Add to Library" button click
+                        if (itemClickListener != null) {
+                            itemClickListener.onItemClick(libraryResult);
+                        }
+                    });
+            dialog.show();
         }
     }
 } 

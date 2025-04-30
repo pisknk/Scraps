@@ -6,17 +6,171 @@
     android:layout_height="match_parent"
     tools:context=".LibraryFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/library_recycler_view"
+    <TextView
+        android:id="@+id/library_title"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:clipToPadding="false"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="Your Library"
+        android:textAppearance="@style/TextAppearance.Scraps.Headline5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/filter_tabs"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/library_title"
+        app:tabMode="fixed"
+        app:tabGravity="fill">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Music" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Movies &amp; TV" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <!-- Scrobbling Now Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/scrobbling_now_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/filter_tabs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/listening_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/music"
+                app:layout_constraintTop_toTopOf="@id/scrobbling_now_title"
+                app:layout_constraintBottom_toBottomOf="@id/scrobbling_now_title"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/scrobbling_now_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Listening to"
+                android:layout_marginStart="8dp"
+                android:textAppearance="@style/TextAppearance.Scraps.Subtitle1"
+                android:textColor="#FF0000"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/listening_icon"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageView
+                android:id="@+id/scrobbling_track_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintTop_toBottomOf="@id/scrobbling_now_title"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:src="@drawable/ic_profile" />
+
+            <TextView
+                android:id="@+id/scrobbling_track_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintTop_toTopOf="@id/scrobbling_track_image"
+                app:layout_constraintStart_toEndOf="@id/scrobbling_track_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Song Name" />
+
+            <TextView
+                android:id="@+id/scrobbling_artist_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintTop_toBottomOf="@id/scrobbling_track_name"
+                app:layout_constraintStart_toEndOf="@id/scrobbling_track_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Artist Name" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/scrobbling_now_card">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/library_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
+            android:visibility="gone" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/library_loading_indicator"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filter_tabs" />
+
+    <!-- Empty State Image -->
+    <ImageView
+        android:id="@+id/empty_library_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/boring"
+        android:visibility="gone"
+        android:contentDescription="Bored face"
+        app:layout_constraintBottom_toTopOf="@id/empty_library_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filter_tabs"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/empty_library_text"
@@ -24,14 +178,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/library_hint"
-        android:textAppearance="@style/TextAppearance.Scraps.Body1"
-        android:fontFamily="@font/google_sans_regular"
+        android:layout_marginTop="16dp"
+        android:text="Your library is empty"
         android:textAlignment="center"
-        android:visibility="gone"
+        android:textAppearance="@style/TextAppearance.Scraps.Body1"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/empty_library_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

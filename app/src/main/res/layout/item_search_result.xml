@@ -1,68 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="8dp"
-    android:background="?attr/selectableItemBackground"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    app:cardBackgroundColor="?attr/colorSurface"
+    android:foreground="?attr/selectableItemBackground">
 
-    <ImageView
-        android:id="@+id/item_artwork"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="Media artwork"
-        android:elevation="2dp"
-        tools:src="@drawable/ic_search"/>
-
-    <TextView
-        android:id="@+id/item_title"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/item_artwork"
-        app:layout_constraintTop_toTopOf="@id/item_artwork"
-        tools:text="Title" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/item_artist"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/item_artwork"
-        app:layout_constraintTop_toBottomOf="@id/item_title"
-        tools:text="Artist" />
+        <!-- Artwork at the top -->
+        <ImageView
+            android:id="@+id/item_artwork"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Media artwork"
+            tools:src="@drawable/ic_search"/>
 
-    <TextView
-        android:id="@+id/item_collection"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="2dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textSize="14sp"
-        android:textStyle="italic"
-        android:alpha="0.7"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/item_artwork"
-        app:layout_constraintTop_toBottomOf="@id/item_artist"
-        tools:text="Collection" />
+        <!-- Content container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout> 
+            <!-- Title -->
+            <TextView
+                android:id="@+id/item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceTitleSmall"
+                tools:text="Title" />
+
+            <!-- Artist/Director -->
+            <TextView
+                android:id="@+id/item_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                tools:text="Artist" />
+
+            <!-- Collection/Year -->
+            <TextView
+                android:id="@+id/item_collection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textStyle="italic"
+                android:alpha="0.7"
+                tools:text="Collection" />
+
+            <!-- Genre - New field -->
+            <TextView
+                android:id="@+id/item_genre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorSecondary"
+                tools:text="Genre" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView> 

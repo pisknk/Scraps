@@ -8,13 +8,14 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
@@ -22,6 +23,8 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.playpass.scraps.adapter.SearchResultAdapter;
 import com.playpass.scraps.api.ITunesApiClient;
+import com.playpass.scraps.api.ImdbApiClient;
+import com.playpass.scraps.dialog.ItemDetailDialog;
 import com.playpass.scraps.model.SearchResponse;
 import com.playpass.scraps.model.SearchResult;
 
@@ -33,11 +36,13 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
     private RecyclerView searchResultsRecyclerView;
     private TextView emptySearchText;
     private ChipGroup filterChipGroup;
-    private Chip filterAll, filterMusic, filterMovie;
+    private Chip filterMusic, filterMovie;
     private SearchResultAdapter adapter;
-    private ITunesApiClient apiClient;
-    private String currentMediaType = "all";
+    private ITunesApiClient iTunesApiClient;
+    private ImdbApiClient imdbApiClient;
+    private String currentMediaType = "music"; // Default to music
     private String currentQuery = "";
+    private ProgressBar loadingIndicator;
     
     // Debounce variables
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
@@ -64,12 +69,13 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
         searchResultsRecyclerView = view.findViewById(R.id.search_results_recycler_view);
         emptySearchText = view.findViewById(R.id.empty_search_text);
         filterChipGroup = view.findViewById(R.id.filter_chip_group);
-        filterAll = view.findViewById(R.id.filter_all);
         filterMusic = view.findViewById(R.id.filter_music);
         filterMovie = view.findViewById(R.id.filter_movie);
+        loadingIndicator = view.findViewById(R.id.search_loading_indicator);
         
-        // Initialize API client
-        apiClient = ITunesApiClient.getInstance();
+        // Initialize API clients
+        iTunesApiClient = ITunesApiClient.getInstance();
+        imdbApiClient = ImdbApiClient.getInstance();
         
         // Set up RecyclerView
         setupRecyclerView();
@@ -99,8 +105,11 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
                 }
                 
                 if (currentQuery.isEmpty()) {
+                    // Clear results and hide loading indicator when search is cleared
                     adapter.updateResults(null);
+                    showLoadingIndicator(false);
                     showEmptyView(true);
+                    emptySearchText.setText("Search for music and movies");
                     return;
                 }
                 
@@ -118,7 +127,7 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
     private void setupRecyclerView() {
         adapter = new SearchResultAdapter(this);
         searchResultsRecyclerView.setAdapter(adapter);
-        searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        searchResultsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         
         // Initially show empty view
         showEmptyView(true);
@@ -128,25 +137,28 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
         filterChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) {
                 // Make sure at least one is selected
-                filterAll.setChecked(true);
+                filterMusic.setChecked(true);
                 return;
             }
             
             int checkedId = checkedIds.get(0);
-            if (checkedId == R.id.filter_all) {
-                currentMediaType = "all";
-            } else if (checkedId == R.id.filter_music) {
+            String oldMediaType = currentMediaType;
+            
+            if (checkedId == R.id.filter_music) {
                 currentMediaType = "music";
             } else if (checkedId == R.id.filter_movie) {
                 currentMediaType = "movie";
             }
             
-            // Only perform search if there's a query
-            if (!currentQuery.isEmpty()) {
+            // Only perform search if there's a query and media type changed
+            if (!currentQuery.isEmpty() && !oldMediaType.equals(currentMediaType)) {
                 // Cancel any pending searches
                 if (searchRunnable != null) {
                     searchHandler.removeCallbacks(searchRunnable);
                 }
+                
+                // Clear existing results
+                adapter.updateResults(null);
                 
                 // Perform search immediately when filter changes
                 if (!isSearching) {
@@ -164,18 +176,62 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
         
         isSearching = true;
         
-        // Show loading state
+        // Show loading state and hide empty view
+        showLoadingIndicator(true);
         showEmptyView(false);
         
-        // Perform iTunes API search
-        apiClient.searchMedia(query, mediaType, 25, new ITunesApiClient.ApiCallback<SearchResponse>() {
+        // Log the search parameters
+        android.util.Log.d("SearchFragment", "Performing search with query: " + query + ", mediaType: " + mediaType);
+        
+        // Decide which API to use based on media type
+        if ("movie".equals(mediaType)) {
+            // Use IMDB API for movie/TV searches
+            android.util.Log.d("SearchFragment", "Using IMDB API for search");
+            searchMoviesAndTV(query);
+        } else {
+            // Use iTunes API for music searches
+            android.util.Log.d("SearchFragment", "Using iTunes API for music search");
+            searchMusic(query);
+        }
+    }
+    
+    private void searchMusic(String query) {
+        iTunesApiClient.searchMedia(query, "music", 25, new ITunesApiClient.ApiCallback<SearchResponse>() {
             @Override
             public void onSuccess(SearchResponse result) {
+                handleSearchResults(result.getResults());
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                handleSearchError(errorMessage);
+            }
+        });
+    }
+    
+    private void searchMoviesAndTV(String query) {
+        imdbApiClient.searchMoviesAndTV(query, 25, new ImdbApiClient.ApiCallback<List<SearchResult>>() {
+            @Override
+            public void onSuccess(List<SearchResult> results) {
+                handleSearchResults(results);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                handleSearchError(errorMessage);
+            }
+        });
+    }
+    
+    private void handleSearchResults(List<SearchResult> searchResults) {
                 if (getActivity() == null || !isAdded()) return;
                 
-                List<SearchResult> searchResults = result.getResults();
+        android.util.Log.d("SearchFragment", "Received search results: " + 
+            (searchResults != null ? searchResults.size() : "null") + " items");
+        
                 requireActivity().runOnUiThread(() -> {
                     isSearching = false;
+            showLoadingIndicator(false);
                     
                     if (searchResults != null && !searchResults.isEmpty()) {
                         adapter.updateResults(searchResults);
@@ -188,19 +244,23 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
                 });
             }
 
-            @Override
-            public void onError(String errorMessage) {
+    private void handleSearchError(String errorMessage) {
                 if (getActivity() == null || !isAdded()) return;
                 
                 requireActivity().runOnUiThread(() -> {
                     isSearching = false;
+            showLoadingIndicator(false);
                     
                     Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
                     showEmptyView(true);
                     emptySearchText.setText("Error searching. Try again.");
                 });
             }
-        });
+
+    private void showLoadingIndicator(boolean isLoading) {
+        if (loadingIndicator != null) {
+            loadingIndicator.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void showEmptyView(boolean isEmpty) {
@@ -224,9 +284,17 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
 
     @Override
     public void onItemClick(SearchResult result) {
-        // Handle item click
-        Toast.makeText(requireContext(), "Selected: " + result.getTrackName(), Toast.LENGTH_SHORT).show();
-        
-        // TODO: Navigate to detail screen or perform action with selected result
+        // Show detail dialog
+        ItemDetailDialog dialog = new ItemDetailDialog(
+            requireContext(), 
+            result,
+            libraryResult -> {
+                // Handle add to library click
+                // TODO: Implement actual library functionality
+                Toast.makeText(requireContext(), "Added to library: " + libraryResult.getTrackName(), 
+                             Toast.LENGTH_SHORT).show();
+            }
+        );
+        dialog.show();
     }
 } 

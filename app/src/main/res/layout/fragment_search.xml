@@ -29,12 +29,13 @@
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Filter Pills -->
     <HorizontalScrollView
         android:id="@+id/filter_scroll"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:scrollbars="none"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_input_layout">
@@ -43,34 +44,40 @@
             android:id="@+id/filter_chip_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
+            android:padding="8dp"
             app:singleSelection="true"
             app:selectionRequired="true">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/filter_all"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="All" />
-
+            <!-- Music Filter -->
             <com.google.android.material.chip.Chip
                 android:id="@+id/filter_music"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Music" />
+                android:text="Music"
+                android:checked="true"
+                style="@style/Widget.Material3.Chip.Filter" />
 
+            <!-- Movie Filter -->
             <com.google.android.material.chip.Chip
                 android:id="@+id/filter_movie"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Movies &amp; TV" />
+                android:text="Movies &amp; TV"
+                style="@style/Widget.Material3.Chip.Filter" />
 
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
+
+    <!-- Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/search_loading_indicator"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filter_scroll" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_results_recycler_view"
