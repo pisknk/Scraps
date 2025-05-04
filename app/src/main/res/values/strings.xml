@@ -11,4 +11,20 @@
     <string name="title_library">Library</string>
     <string name="title_search">Search</string>
     <string name="title_profile">Profile</string>
+    
+    <!-- Last.fm Collage Generator -->
+    <string-array name="collage_time_periods">
+        <item>Last 7 days</item>
+        <item>Last 30 days</item>
+        <item>Last 12 months</item>
+    </string-array>
+    
+    <string-array name="collage_sizes">
+        <item>3x3</item>
+        <item>4x4</item>
+        <item>6x6</item>
+        <item>9x9</item>
+        <item>12x12</item>
+        <item>Custom</item>
+    </string-array>
 </resources>

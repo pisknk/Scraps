@@ -72,6 +72,9 @@ dependencies {
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
     
+    // Picasso for image loading in collage generator
+    implementation("com.squareup.picasso:picasso:2.8")
+    
     // Firebase dependencies
     // implementation("com.google.firebase:firebase-firestore:24.9.1") // Replaced with Realtime Database
     implementation("com.google.firebase:firebase-database:20.3.1") // Firebase Realtime Database

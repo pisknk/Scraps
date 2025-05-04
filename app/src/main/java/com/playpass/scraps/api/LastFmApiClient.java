@@ -32,5 +32,19 @@ public class LastFmApiClient {
                 @Query("user") String username,
                 @Query("api_key") String apiKey,
                 @Query("limit") int limit);
+                
+        @GET("?method=user.gettopalbums&format=json")
+        Call<LastFmResponse> getTopAlbums(
+                @Query("user") String username,
+                @Query("api_key") String apiKey,
+                @Query("period") String period,
+                @Query("limit") int limit);
+                
+        @GET("?method=user.gettoptracks&format=json")
+        Call<LastFmResponse> getTopTracks(
+                @Query("user") String username,
+                @Query("api_key") String apiKey,
+                @Query("period") String period,
+                @Query("limit") int limit);
     }
 } 

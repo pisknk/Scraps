@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.playpass.scraps.model.SearchResponse;
+import com.playpass.scraps.model.ITunesResponse;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -125,5 +126,28 @@ public class ITunesApiClient {
     public interface ApiCallback<T> {
         void onSuccess(T result);
         void onError(String errorMessage);
+    }
+
+    private static ITunesService service;
+    
+    public static ITunesService getService() {
+        if (service == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            
+            service = retrofit.create(ITunesService.class);
+        }
+        return service;
+    }
+    
+    public interface ITunesService {
+        @GET("search")
+        Call<ITunesResponse> searchMusic(
+                @Query("term") String term,
+                @Query("media") String media,
+                @Query("entity") String entity,
+                @Query("limit") int limit);
     }
 } 
