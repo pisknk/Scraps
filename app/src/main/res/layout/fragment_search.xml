@@ -68,6 +68,20 @@
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 
+    <!-- Instructions text -->
+    <TextView
+        android:id="@+id/instructions_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tap card to add to library. Long press for details."
+        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+        android:textColor="?android:textColorSecondary"
+        android:textStyle="italic"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filter_scroll" />
+
     <!-- Loading Indicator -->
     <ProgressBar
         android:id="@+id/search_loading_indicator"
@@ -77,7 +91,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filter_scroll" />
+        app:layout_constraintTop_toBottomOf="@id/instructions_text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_results_recycler_view"
@@ -89,7 +103,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filter_scroll" />
+        app:layout_constraintTop_toBottomOf="@id/instructions_text" />
 
     <TextView
         android:id="@+id/empty_search_text"
@@ -104,6 +118,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filter_scroll" />
+        app:layout_constraintTop_toBottomOf="@id/instructions_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

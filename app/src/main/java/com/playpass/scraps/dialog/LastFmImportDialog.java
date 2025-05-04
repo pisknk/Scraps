@@ -240,6 +240,17 @@ public class LastFmImportDialog extends Dialog implements SearchResultAdapter.On
         checkAndAddSingleTrack(result);
     }
     
+    @Override
+    public void onItemLongClick(SearchResult result) {
+        // Handle long press - show detailed information about the item
+        ItemDetailDialog dialog = new ItemDetailDialog(
+            getContext(),
+            result,
+            libraryResult -> checkAndAddSingleTrack(libraryResult)
+        );
+        dialog.show();
+    }
+    
     private void checkAndAddSingleTrack(SearchResult result) {
         // Check if the track is already in the library
         libraryManager.isItemInLibrary(result, new LibraryManager.LibraryCallback<Boolean>() {

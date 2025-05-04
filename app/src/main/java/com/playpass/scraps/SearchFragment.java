@@ -25,6 +25,7 @@ import com.playpass.scraps.adapter.SearchResultAdapter;
 import com.playpass.scraps.api.ITunesApiClient;
 import com.playpass.scraps.api.ImdbApiClient;
 import com.playpass.scraps.dialog.ItemDetailDialog;
+import com.playpass.scraps.library.LibraryManager;
 import com.playpass.scraps.model.SearchResponse;
 import com.playpass.scraps.model.SearchResult;
 
@@ -40,6 +41,7 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
     private SearchResultAdapter adapter;
     private ITunesApiClient iTunesApiClient;
     private ImdbApiClient imdbApiClient;
+    private LibraryManager libraryManager;
     private String currentMediaType = "music"; // Default to music
     private String currentQuery = "";
     private ProgressBar loadingIndicator;
@@ -73,9 +75,10 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
         filterMovie = view.findViewById(R.id.filter_movie);
         loadingIndicator = view.findViewById(R.id.search_loading_indicator);
         
-        // Initialize API clients
+        // Initialize API clients and library manager
         iTunesApiClient = ITunesApiClient.getInstance();
         imdbApiClient = ImdbApiClient.getInstance();
+        libraryManager = LibraryManager.getInstance();
         
         // Set up RecyclerView
         setupRecyclerView();
@@ -224,38 +227,38 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
     }
     
     private void handleSearchResults(List<SearchResult> searchResults) {
-                if (getActivity() == null || !isAdded()) return;
+        if (getActivity() == null || !isAdded()) return;
                 
         android.util.Log.d("SearchFragment", "Received search results: " + 
             (searchResults != null ? searchResults.size() : "null") + " items");
         
-                requireActivity().runOnUiThread(() -> {
-                    isSearching = false;
+        requireActivity().runOnUiThread(() -> {
+            isSearching = false;
             showLoadingIndicator(false);
                     
-                    if (searchResults != null && !searchResults.isEmpty()) {
-                        adapter.updateResults(searchResults);
-                        showEmptyView(false);
-                    } else {
-                        adapter.updateResults(null);
-                        showEmptyView(true);
-                        emptySearchText.setText("No results found");
-                    }
-                });
+            if (searchResults != null && !searchResults.isEmpty()) {
+                adapter.updateResults(searchResults);
+                showEmptyView(false);
+            } else {
+                adapter.updateResults(null);
+                showEmptyView(true);
+                emptySearchText.setText("No results found");
             }
+        });
+    }
 
     private void handleSearchError(String errorMessage) {
-                if (getActivity() == null || !isAdded()) return;
+        if (getActivity() == null || !isAdded()) return;
                 
-                requireActivity().runOnUiThread(() -> {
-                    isSearching = false;
+        requireActivity().runOnUiThread(() -> {
+            isSearching = false;
             showLoadingIndicator(false);
                     
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                    showEmptyView(true);
-                    emptySearchText.setText("Error searching. Try again.");
-                });
-            }
+            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            showEmptyView(true);
+            emptySearchText.setText("Error searching. Try again.");
+        });
+    }
 
     private void showLoadingIndicator(boolean isLoading) {
         if (loadingIndicator != null) {
@@ -282,19 +285,79 @@ public class SearchFragment extends Fragment implements SearchResultAdapter.OnIt
         }
     }
 
+    /**
+     * Called when a search result card is tapped
+     * Now adds the item directly to the library (with validation)
+     */
     @Override
     public void onItemClick(SearchResult result) {
+        // Check if the item is already in library
+        libraryManager.isItemInLibrary(result, new LibraryManager.LibraryCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean isInLibrary) {
+                if (isInLibrary) {
+                    Toast.makeText(requireContext(), "Already added to library", Toast.LENGTH_SHORT).show();
+                } else {
+                    addToLibrary(result);
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // If there's an error checking, try to add anyway
+                Toast.makeText(requireContext(), "Error checking library: " + errorMessage, Toast.LENGTH_SHORT).show();
+                addToLibrary(result);
+            }
+        });
+    }
+    
+    /**
+     * Called when a search result card is long-pressed
+     * Shows detailed information about the item
+     */
+    public void onItemLongClick(SearchResult result) {
         // Show detail dialog
         ItemDetailDialog dialog = new ItemDetailDialog(
             requireContext(), 
             result,
             libraryResult -> {
-                // Handle add to library click
-                // TODO: Implement actual library functionality
-                Toast.makeText(requireContext(), "Added to library: " + libraryResult.getTrackName(), 
-                             Toast.LENGTH_SHORT).show();
+                // Check if the item is already in library before adding
+                libraryManager.isItemInLibrary(libraryResult, new LibraryManager.LibraryCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean isInLibrary) {
+                        if (isInLibrary) {
+                            Toast.makeText(requireContext(), "Already added to library", Toast.LENGTH_SHORT).show();
+                        } else {
+                            addToLibrary(libraryResult);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        // If there's an error checking, try to add anyway
+                        Toast.makeText(requireContext(), "Error checking library: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        addToLibrary(libraryResult);
+                    }
+                });
             }
         );
         dialog.show();
+    }
+    
+    /**
+     * Helper method to add an item to the library
+     */
+    private void addToLibrary(SearchResult result) {
+        libraryManager.addToLibrary(result, new LibraryManager.LibraryCallback<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(requireContext(), "Added to library: " + result.getTrackName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(requireContext(), "Failed to add to library: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 } 

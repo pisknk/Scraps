@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.playpass.scraps.R;
-import com.playpass.scraps.dialog.ItemDetailDialog;
+import com.playpass.scraps.SearchFragment;
 import com.playpass.scraps.model.SearchResult;
 
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     
     public interface OnItemClickListener {
         void onItemClick(SearchResult result);
+        void onItemLongClick(SearchResult result);
     }
     
     public SearchResultAdapter(OnItemClickListener listener) {
@@ -117,7 +118,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                 artwork.setImageResource(R.drawable.ic_search);
             }
             
-            // Set click listener for normal taps
+            // Set click listener for normal taps (add to library)
             itemView.setOnClickListener(v -> {
                 if (itemClickListener != null) {
                     itemClickListener.onItemClick(result);
@@ -126,20 +127,12 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             
             // Set long press listener to show detail dialog
             itemView.setOnLongClickListener(v -> {
-                showDetailDialog(result);
-                return true; // Consume the long press event
+                if (itemClickListener != null) {
+                    itemClickListener.onItemLongClick(result);
+                    return true; // Consume the long press event
+                }
+                return false;
             });
-        }
-        
-        private void showDetailDialog(SearchResult result) {
-            ItemDetailDialog dialog = new ItemDetailDialog(context, result, 
-                    libraryResult -> {
-                        // Handle "Add to Library" button click
-                        if (itemClickListener != null) {
-                            itemClickListener.onItemClick(libraryResult);
-                        }
-                    });
-            dialog.show();
         }
     }
 } 

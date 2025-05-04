@@ -476,4 +476,18 @@ public class LibraryFragment extends Fragment implements SearchResultAdapter.OnI
         );
         dialog.show();
     }
+    
+    @Override
+    public void onItemLongClick(SearchResult result) {
+        // Handle long click on library items - show the same detail dialog as regular click for now
+        ItemDetailDialog dialog = new ItemDetailDialog(
+            requireContext(), 
+            result,
+            libraryResult -> {
+                // Library item updated, refresh the list
+                loadLibraryItems();
+            }
+        );
+        dialog.show();
+    }
 } 
