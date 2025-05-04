@@ -44,63 +44,91 @@
         app:layout_constraintTop_toBottomOf="@id/username_text"
         tools:text="user@example.com" />
 
-    <!-- Last.fm Integration -->
-    <TextView
-        android:id="@+id/lastfm_title"
-        android:layout_width="wrap_content"
+    <!-- Last.fm Integration Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/lastfm_card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Last.fm Integration"
-        android:textAppearance="@style/TextAppearance.Scraps.Headline6"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/email_text" />
+        app:layout_constraintTop_toBottomOf="@id/email_text">
 
-    <TextView
-        android:id="@+id/lastfm_username_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Username:"
-        android:textAppearance="@style/TextAppearance.Scraps.Body2"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/lastfm_username_value"
-        app:layout_constraintTop_toBottomOf="@id/lastfm_title"
-        app:layout_constraintHorizontal_chainStyle="packed" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-    <TextView
-        android:id="@+id/lastfm_username_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="Not connected"
-        android:textAppearance="@style/TextAppearance.Scraps.Body2"
-        app:layout_constraintStart_toEndOf="@+id/lastfm_username_label"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/lastfm_username_label" />
+            <TextView
+                android:id="@+id/lastfm_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last.fm Integration"
+                android:textAppearance="@style/TextAppearance.Scraps.Headline6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btn_import_lastfm"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Import from Last.fm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lastfm_username_label" />
+            <LinearLayout
+                android:id="@+id/lastfm_username_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lastfm_title">
 
-    <Button
-        android:id="@+id/btn_connect_lastfm"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Connect Last.fm Account"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_import_lastfm" />
+                <TextView
+                    android:id="@+id/lastfm_username_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username:"
+                    android:textAppearance="@style/TextAppearance.Scraps.Body2"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/lastfm_username_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="Not connected"
+                    android:textAppearance="@style/TextAppearance.Scraps.Body2" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lastfm_username_container">
+
+                <Button
+                    android:id="@+id/btn_import_lastfm"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:text="FETCH LATEST SCROBBLES" />
+
+                <Button
+                    android:id="@+id/btn_connect_lastfm"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:text="CHANGE LAST.FM ACCOUNT" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/sign_out_button"
@@ -112,6 +140,6 @@
         android:fontFamily="@font/google_sans_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_connect_lastfm" />
+        app:layout_constraintTop_toBottomOf="@id/lastfm_card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

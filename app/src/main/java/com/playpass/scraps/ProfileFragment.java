@@ -1,11 +1,16 @@
 package com.playpass.scraps;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +25,7 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.playpass.scraps.api.LastFmApiClient;
@@ -87,11 +93,8 @@ public class ProfileFragment extends Fragment {
         // Update UI with current user data
         updateUI(mAuth.getCurrentUser());
         
-        // Set up Last.fm username if available
-        String lastfmUsername = preferences.getString(PREF_LASTFM_USERNAME, null);
-        if (lastfmUsername != null && !lastfmUsername.isEmpty()) {
-            lastfmUsernameValue.setText(lastfmUsername);
-        }
+        // Set up Last.fm username if available and update UI
+        updateLastFmUI();
         
         // Set up button listeners
         signOutButton.setOnClickListener(v -> {
@@ -131,16 +134,41 @@ public class ProfileFragment extends Fragment {
         }
     }
     
+    private void updateLastFmUI() {
+        String lastfmUsername = preferences.getString(PREF_LASTFM_USERNAME, null);
+        if (lastfmUsername != null && !lastfmUsername.isEmpty()) {
+            // We have a connected Last.fm account
+            lastfmUsernameValue.setText(lastfmUsername);
+            importLastfmButton.setEnabled(true);
+            connectLastfmButton.setText("CHANGE LAST.FM ACCOUNT");
+        } else {
+            // No Last.fm account connected
+            lastfmUsernameValue.setText("Not connected");
+            importLastfmButton.setEnabled(false);
+            connectLastfmButton.setText("CONNECT LAST.FM ACCOUNT");
+        }
+    }
+    
     private void showLastFmImportDialog() {
-        LastFmImportDialog dialog = new LastFmImportDialog(requireContext(), tracksImported -> {
-            // Refresh the UI if tracks were imported
-            if (tracksImported > 0) {
-                Toast.makeText(requireContext(), 
-                        "Successfully imported " + tracksImported + " tracks", 
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-        dialog.show();
+        String lastfmUsername = preferences.getString(PREF_LASTFM_USERNAME, null);
+        
+        // Only proceed if we have a username
+        if (lastfmUsername != null && !lastfmUsername.isEmpty()) {
+            LastFmImportDialog dialog = new LastFmImportDialog(requireContext(), tracksImported -> {
+                // Refresh the UI if tracks were imported
+                if (tracksImported > 0) {
+                    Toast.makeText(requireContext(), 
+                            "Successfully fetched " + tracksImported + " tracks", 
+                            Toast.LENGTH_SHORT).show();
+                }
+            }, lastfmUsername); // Pass the saved username
+            dialog.show();
+        } else {
+            // This should not happen due to button being disabled
+            Toast.makeText(requireContext(), 
+                    "Please connect your Last.fm account first", 
+                    Toast.LENGTH_SHORT).show();
+        }
     }
     
     private void showLastFmConnectDialog() {
@@ -148,24 +176,41 @@ public class ProfileFragment extends Fragment {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_lastfm_connect, null);
         final android.widget.EditText input = dialogView.findViewById(R.id.lastfm_username_input);
         final MaterialCheckBox autoImportCheckbox = dialogView.findViewById(R.id.auto_import_checkbox);
+        final Button connectButton = dialogView.findViewById(R.id.btn_connect);
+        final Button cancelButton = dialogView.findViewById(R.id.btn_cancel);
         
-        // Create the dialog
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Connect Last.fm Account")
-                .setView(dialogView)
-                .setPositiveButton("Connect", (dialog, which) -> {
-                    String username = input.getText().toString().trim();
-                    if (!username.isEmpty()) {
-                        // Save auto-import preference
-                        boolean autoImport = autoImportCheckbox.isChecked();
-                        preferences.edit().putBoolean(PREF_AUTO_IMPORT, autoImport).apply();
-                        
-                        // Validate username by attempting to fetch recent tracks
-                        validateAndSaveLastFmUsername(username, autoImport);
-                    }
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .show();
+        // Create the dialog with custom style
+        Dialog dialog = new Dialog(requireContext(), R.style.CustomDialog_RoundedCorners);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        
+        // Set transparent background for rounded corners
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        }
+        
+        // Set up button listeners
+        connectButton.setOnClickListener(v -> {
+            String username = input.getText().toString().trim();
+            if (!username.isEmpty()) {
+                // Save auto-import preference
+                boolean autoImport = autoImportCheckbox.isChecked();
+                preferences.edit().putBoolean(PREF_AUTO_IMPORT, autoImport).apply();
+                
+                // Validate username by attempting to fetch recent tracks
+                validateAndSaveLastFmUsername(username, autoImport);
+                dialog.dismiss();
+            } else {
+                // Show error if username is empty
+                ((TextInputLayout) dialogView.findViewById(R.id.lastfm_username_layout))
+                    .setError("Username is required");
+            }
+        });
+        
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+        
+        dialog.show();
     }
     
     private void validateAndSaveLastFmUsername(String username, boolean autoImport) {
@@ -177,7 +222,7 @@ public class ProfileFragment extends Fragment {
                                 response.body().getRecentTracks() != null) {
                             // Username is valid, save it
                             preferences.edit().putString(PREF_LASTFM_USERNAME, username).apply();
-                            lastfmUsernameValue.setText(username);
+                            updateLastFmUI();
                             Toast.makeText(requireContext(), 
                                     "Connected to Last.fm account: " + username, 
                                     Toast.LENGTH_SHORT).show();

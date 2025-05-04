@@ -216,9 +216,20 @@ public class LibraryManager {
             // For music, use iTunes track ID
             return "itunes_" + item.getTrackId();
         } else {
-            // Fallback to combination of name and artist
-            return "custom_" + item.getTrackName() + "_" + item.getArtistName();
+            // Fallback to combination of name and artist - need to sanitize for Firebase
+            String trackName = item.getTrackName() != null ? sanitizeForFirebase(item.getTrackName()) : "unknown";
+            String artistName = item.getArtistName() != null ? sanitizeForFirebase(item.getArtistName()) : "unknown";
+            return "custom_" + trackName + "_" + artistName;
         }
+    }
+    
+    /**
+     * Sanitize a string for use as a Firebase database path
+     * Firebase doesn't allow '.', '#', '$', '[', or ']' in paths
+     */
+    private String sanitizeForFirebase(String input) {
+        if (input == null) return "";
+        return input.replaceAll("[.#$\\[\\]]", "_");
     }
     
     /**

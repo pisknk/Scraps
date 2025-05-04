@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -57,6 +58,7 @@ public class LibraryFragment extends Fragment implements SearchResultAdapter.OnI
     private ProgressBar loadingIndicator;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TabLayout filterTabs;
+    private Button playbackHistoryButton;
     
     // Scrobbling Now views
     private CardView scrobblingNowCard;
@@ -91,13 +93,14 @@ public class LibraryFragment extends Fragment implements SearchResultAdapter.OnI
         super.onViewCreated(view, savedInstanceState);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        
+
         libraryRecyclerView = view.findViewById(R.id.library_recycler_view);
         emptyLibraryText = view.findViewById(R.id.empty_library_text);
         emptyLibraryImage = view.findViewById(R.id.empty_library_image);
         loadingIndicator = view.findViewById(R.id.library_loading_indicator);
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         filterTabs = view.findViewById(R.id.filter_tabs);
+        playbackHistoryButton = view.findViewById(R.id.btn_playback_history);
         
         // Initialize Scrobbling Now views
         scrobblingNowCard = view.findViewById(R.id.scrobbling_now_card);
@@ -119,6 +122,9 @@ public class LibraryFragment extends Fragment implements SearchResultAdapter.OnI
         
         // Set up filter tabs
         setupFilterTabs();
+        
+        // Set up Playback History button
+        setupPlaybackHistoryButton();
         
         // Initialize polling handler for "Scrobbling Now" feature
         pollingHandler = new Handler(Looper.getMainLooper());
@@ -211,12 +217,15 @@ public class LibraryFragment extends Fragment implements SearchResultAdapter.OnI
                 switch (tab.getPosition()) {
                     case 0:
                         currentFilter = "all";
+                        playbackHistoryButton.setVisibility(View.GONE);
                         break;
                     case 1:
                         currentFilter = "music";
+                        playbackHistoryButton.setVisibility(View.VISIBLE);
                         break;
                     case 2:
                         currentFilter = "movie";
+                        playbackHistoryButton.setVisibility(View.GONE);
                         break;
                 }
                 filterLibraryItems();
@@ -232,6 +241,29 @@ public class LibraryFragment extends Fragment implements SearchResultAdapter.OnI
                 // Not used
             }
         });
+    }
+    
+    private void setupPlaybackHistoryButton() {
+        // Initially hide the button (default tab is "All")
+        playbackHistoryButton.setVisibility(View.GONE);
+        
+        // Set click listener
+        playbackHistoryButton.setOnClickListener(v -> {
+            String lastfmUsername = preferences.getString(PREF_LASTFM_USERNAME, null);
+            if (lastfmUsername != null && !lastfmUsername.isEmpty()) {
+                showPlaybackHistoryDialog(lastfmUsername);
+            } else {
+                Toast.makeText(requireContext(), 
+                        "Please connect your Last.fm account first", 
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    
+    private void showPlaybackHistoryDialog(String lastfmUsername) {
+        com.playpass.scraps.dialog.PlaybackHistoryDialog dialog = 
+                new com.playpass.scraps.dialog.PlaybackHistoryDialog(requireContext(), lastfmUsername);
+        dialog.show();
     }
     
     private void loadLibraryItems() {
@@ -292,7 +324,7 @@ public class LibraryFragment extends Fragment implements SearchResultAdapter.OnI
         
         if (filteredItems.isEmpty()) {
             adapter.updateResults(null);
-            showEmptyView(true);
+        showEmptyView(true);
             emptyLibraryText.setText("No " + currentFilter + " items in your library");
         } else {
             adapter.updateResults(filteredItems);

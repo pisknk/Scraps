@@ -1,30 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="24dp"
+    android:background="@drawable/rounded_dialog_background">
 
     <TextView
+        android:id="@+id/dialog_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Import from Last.fm"
+        android:text="Fetch Latest Scrobbles"
         android:textAppearance="@style/TextAppearance.Scraps.Headline6" />
 
     <TextView
+        android:id="@+id/dialog_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Enter your Last.fm username to import your recently scrobbled tracks."
+        android:layout_marginBottom="16dp"
+        android:text="Enter your Last.fm username to fetch your recently scrobbled tracks into your library."
         android:textAppearance="@style/TextAppearance.Scraps.Body1" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorColor="#6200EE"
+        app:trackColor="#E6E0F8" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lastfm_username_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:hint="Last.fm Username">
 
@@ -37,10 +51,51 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Results section - initially hidden -->
     <LinearLayout
+        android:id="@+id/results_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Results hint text -->
+        <TextView
+            android:id="@+id/results_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tap a card to add to library. Long press for details."
+            android:textStyle="italic"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"
+            android:textAppearance="@style/TextAppearance.Scraps.Caption" />
+
+        <!-- Add All button at the top of results -->
+        <Button
+            android:id="@+id/btn_add_all"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ADD ALL"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="#6200EE" />
+
+        <!-- Search Results RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_results_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="300dp"
+            android:nestedScrollingEnabled="true" />
+    </LinearLayout>
+
+    <!-- Initial buttons (Fetch/Cancel) -->
+    <LinearLayout
+        android:id="@+id/initial_buttons_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="16dp"
         android:gravity="end">
 
         <Button
@@ -48,14 +103,17 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel" />
+            android:layout_marginEnd="8dp"
+            android:text="CANCEL"
+            android:textColor="#6200EE" />
 
         <Button
             android:id="@+id/btn_import"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Import" />
+            android:text="FETCH"
+            android:backgroundTint="#6200EE" />
 
     </LinearLayout>
 
