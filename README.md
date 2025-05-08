@@ -1,10 +1,6 @@
 # scraps
 
-scraps is an android application that allows users to store and manage their favourite music and movies in a digital library.
-
-## screenshots
-
-// add screenshots here (e.g. landing page, search, library, profile)
+scraps is designed to be a simple, beautiful, and modern digital library for your favorite media. it leverages firebase for authentication, the itunes api and omdb for discovery, and last.fm for music playback history. the landing page features a unique animated mesh gradient background inspired by apple's meshgradient.
 
 ---
 
@@ -21,10 +17,6 @@ scraps is an android application that allows users to store and manage their fav
 - google recaptcha for bot protection
 - modern onboarding and sign-in flow
 - generate a collage of your favorite tracks or albums with the collage generator
-
-## project overview
-
-scraps is designed to be a simple, beautiful, and modern digital library for your favorite media. it leverages firebase for authentication, the itunes api and omdb for discovery, and last.fm for music playback history. the landing page features a unique animated mesh gradient background inspired by apple's meshgradient.
 
 ## setup
 
@@ -109,7 +101,7 @@ the app follows a standard android architecture pattern:
 ## faq
 
 **q: can i use my own color palette for the mesh gradient?**
-- a: yes! edit the `colors` array in `MeshGradientView.java`.
+- a: yasss! edit the `colors` array in `MeshGradientView.java`.
 
 **q: how do i add more categories or filters?**
 - a: update the ui and data model to support new categories.
@@ -118,7 +110,7 @@ the app follows a standard android architecture pattern:
 - a: basic library viewing works offline, but search and sign-in require internet.
 
 **q: how do i use the collage generator?**
-- a: go to your profile or library, tap the collage generator button, and select the items you want to include. the app will generate a visual collage for you to save or share.
+- a: go to your profile tab, tap the collage generator button, and select the items you want to include. the app will generate a visual collage for you to save or share.
 
 ## contributing
 
