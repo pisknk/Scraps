@@ -34,12 +34,17 @@ public class LandingActivity extends AppCompatActivity {
     private TextView appNameText;
     private TextView appDescriptionText;
     private TextView buttonText;
+    private MeshGradientView gradientBackground;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_landing);
+        
+        // Set up the animated background
+        gradientBackground = findViewById(R.id.gradient_background);
+        gradientBackground.startAnimation();
         
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
