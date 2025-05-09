@@ -1217,17 +1217,49 @@ section,
 # Gallery Section
 --------------------------------------------------------------*/
 .gallery .gallery-item {
+  position: relative;
   overflow: hidden;
-  border-right: 3px solid var(--background-color);
-  border-bottom: 3px solid var(--background-color);
+  border-radius: 10px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.gallery .gallery-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
 }
 
 .gallery .gallery-item img {
-  transition: all ease-in-out 0.4s;
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-.gallery .gallery-item:hover img {
-  transform: scale(1.1);
+.gallery .gallery-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+.gallery .gallery-info h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+}
+
+.gallery .gallery-info p {
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.gallery .gallery-item:hover .gallery-info {
+  background: rgba(0, 0, 0, 0.9);
 }
 
 /*--------------------------------------------------------------
